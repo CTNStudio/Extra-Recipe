@@ -1,0 +1,63 @@
+name: Forward Port Data (6, 7 → master)
+
+on:
+  push:
+    branches:
+      - "6-1.16.2-1.16.5"
+      - "7-1.17-1.17.1"
+
+jobs:
+  forward-port:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Define sync rules
+        id: vars
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "6-1.16.2-1.16.5" ]]; then
+            echo "targets=7-1.17-1.17.1 master" >> $GITHUB_OUTPUT
+            echo "datadir=data/recipes/6-1.16.2-1.16.5" >> $GITHUB_OUTPUT
+          fi
+
+          if [[ "${GITHUB_REF_NAME}" == "7-1.17-1.17.1" ]]; then
+            echo "targets=master" >> $GITHUB_OUTPUT
+            echo "datadir=data/recipes/7-1.17-1.17.1" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Forward port data directory
+        run: |
+          targets=(${{ steps.vars.outputs.targets }})
+          datadir="${{ steps.vars.outputs.datadir }}"
+
+          for TO in "${targets[@]}"; do
+            echo "Syncing: ${datadir} → data/recipes/$TO"
+
+            BRANCH="fp-${GITHUB_REF_NAME}-to-$TO-$(date +%s)"
+            git checkout -b $BRANCH
+
+            mkdir -p "data/recipes/$TO"
+            cp -r "$datadir/"* "data/recipes/$TO/" || true
+
+            git add "data/recipes/$TO"
+            git commit -m "Forward-port data: ${GITHUB_REF_NAME} → $TO" || true
+
+            git push origin $BRANCH || true
+
+            gh pr create \
+              --title "Forward-port data: ${GITHUB_REF_NAME} → $TO" \
+              --body "自动同步 data/recipes：从 **${GITHUB_REF_NAME}** 到 **$TO**。" \
+              --base $TO \
+              --head $BRANCH || true
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
