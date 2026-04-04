@@ -1,4 +1,4 @@
-name: Forward Port Data (6, 7 → master)
+name: Forward Port Data (6, 7 → 9, master)
 
 on:
   push:
@@ -24,13 +24,15 @@ jobs:
       - name: Define sync rules
         id: vars
         run: |
+          # 6 → 7, 9, master
           if [[ "${GITHUB_REF_NAME}" == "6-1.16.2-1.16.5" ]]; then
-            echo "targets=7-1.17-1.17.1 master" >> $GITHUB_OUTPUT
+            echo "targets=7-1.17-1.17.1 9-1.18.2 master" >> $GITHUB_OUTPUT
             echo "datadir=data/recipes/6-1.16.2-1.16.5" >> $GITHUB_OUTPUT
           fi
 
+          # 7 → 9, master
           if [[ "${GITHUB_REF_NAME}" == "7-1.17-1.17.1" ]]; then
-            echo "targets=master" >> $GITHUB_OUTPUT
+            echo "targets=9-1.18.2 master" >> $GITHUB_OUTPUT
             echo "datadir=data/recipes/7-1.17-1.17.1" >> $GITHUB_OUTPUT
           fi
 
