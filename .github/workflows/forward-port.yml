@@ -24,13 +24,13 @@ jobs:
       - name: Define sync rules
         id: vars
         run: |
-          # 6 → 7, 9, master
+          # 6 -> 7, 9, master
           if [[ "${GITHUB_REF_NAME}" == "6-1.16.2-1.16.5" ]]; then
             echo "targets=7-1.17-1.17.1 9-1.18.2 master" >> $GITHUB_OUTPUT
             echo "datadir=data/extrarecipe/recipes/6-1.16.2-1.16.5" >> $GITHUB_OUTPUT
           fi
 
-          # 7 → 9, master
+          # 7 -> 9, master
           if [[ "${GITHUB_REF_NAME}" == "7-1.17-1.17.1" ]]; then
             echo "targets=9-1.18.2 master" >> $GITHUB_OUTPUT
             echo "datadir=data/extrarecipe/recipes/7-1.17-1.17.1" >> $GITHUB_OUTPUT
@@ -42,7 +42,7 @@ jobs:
           datadir="${{ steps.vars.outputs.datadir }}"
 
           for TO in "${targets[@]}"; do
-            echo "Syncing: ${datadir} → data/recipes/$TO"
+            echo "Syncing: ${datadir} -> data/recipes/$TO"
 
             BRANCH="fp-${GITHUB_REF_NAME}-to-$TO-$(date +%s)"
             git checkout -b $BRANCH
@@ -51,13 +51,13 @@ jobs:
             cp -r "$datadir/"* "data/recipes/$TO/" || true
 
             git add "data/recipes/$TO"
-            git commit -m "Forward-port data: ${GITHUB_REF_NAME} → $TO" || true
+            git commit -m "Forward-port data: ${GITHUB_REF_NAME} to $TO" || true
 
             git push origin $BRANCH || true
 
             gh pr create \
-              --title "Forward-port data: ${GITHUB_REF_NAME} → $TO" \
-              --body "自动同步 data/recipes：从 **${GITHUB_REF_NAME}** 到 **$TO**。" \
+              --title "Forward-port data: ${GITHUB_REF_NAME} to $TO" \
+              --body "Auto sync data/recipes from ${GITHUB_REF_NAME} to ${TO}." \
               --base $TO \
               --head $BRANCH || true
           done
