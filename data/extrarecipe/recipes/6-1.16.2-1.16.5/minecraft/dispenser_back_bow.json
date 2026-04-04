@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "1": {
+      "item": "minecraft:stick"
+    },
+    "2": {
+      "item": "minecraft:string"
+    },
+    "3": {
+      "item": "minecraft:dropper"
+    }
+  },
+  "pattern": [
+    "21 ",
+    "231",
+    "21 "
+  ],
+  "result": {
+    "item": "minecraft:dispenser",
+    "count": 1
+  }
+}

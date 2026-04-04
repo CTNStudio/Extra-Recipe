@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "sapling",
+  "pattern": [
+    "#$#",
+    " * "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:acacia_leaves"
+    },
+    "$": {
+      "item": "minecraft:bone_meal"
+    },
+    "*": {
+      "item": "minecraft:dead_bush"
+    }
+  },
+  "result": {
+    "item": "minecraft:acacia_sapling",
+    "count": 1
+  }
+}

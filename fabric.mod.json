@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "extrarecipe",
-    "version": "4.0-48",
+    "version": "4.0.0-6",
     "name": "Extra Recipe",
     "description": "Added more recipes for the vanilla and other mods!",
     "authors": [
