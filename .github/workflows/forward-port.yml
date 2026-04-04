@@ -1,4 +1,4 @@
-name: Forward Port Data (6, 7 → 9, master)
+name: Forward Port Data
 
 on:
   push:
