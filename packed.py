@@ -121,7 +121,7 @@ def convert_recipe_for_1_21(data: dict) -> dict:
 def get_modified_content(filepath: Path, pack_type: str, version: str, mc_version: str) -> bytes:
     name = filepath.name
     try:
-        if name in ('pack.mcmeta', 'fabric.mod.json', 'quilt.mod.json'):
+        if name in ('pack.mcmeta', 'fabric.mod.json'):
             with open(filepath, 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
@@ -131,15 +131,51 @@ def get_modified_content(filepath: Path, pack_type: str, version: str, mc_versio
                 if pack_type == 'datapack':
                     for key in ('fabric', 'quilt', 'forge', 'neoforge'):
                         data.pop(key, None)
-            elif name in ('fabric.mod.json', 'quilt.mod.json'):
+            elif name == 'fabric.mod.json':
                 data['version'] = version
 
             return json.dumps(data, indent=2, ensure_ascii=False).encode('utf-8')
 
+        elif name == 'quilt.mod.json':
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            # quilt.mod.json 的 version 在 quilt_loader.version
+            if 'quilt_loader' in data:
+                data['quilt_loader']['version'] = version
+
+            return json.dumps(data, indent=2, ensure_ascii=False).encode('utf-8')
+
+
         elif name == 'mods.toml':
+
             content = filepath.read_text(encoding='utf-8')
-            content = re.sub(r'(\[\[mods]][\s\S]*?version\s*=\s*)".*?"', rf'\1"{version}"', content, count=1)
-            content = re.sub(r'(displayName\s*=\s*)".*?"', rf'\1"Extra Recipe v{version}"', content, count=1)
+
+            # 更新 version 字段 - 匹配 extrarecipe 模组的 version
+
+            content = re.sub(r"(modId\s*=\s*'extrarecipe',\s*version\s*=\s*')([^']+)'", rf"\g<1>{version}'", content,
+                             count=1)
+
+            # 更新 displayName 字段
+
+            content = re.sub(r"(displayName\s*=\s*')([^']+)'", rf"\g<1>Extra Recipe v{version}'", content, count=1)
+
+            # 根据 Minecraft 版本选择 modLoader
+
+            pack_format = PACK_FORMAT_MAP.get(mc_version, 4)
+
+            if pack_format < 8:
+
+                # 1.17 及以前使用 javafml
+
+                content = re.sub(r'modLoader\s*=\s*".*?"', r'modLoader="javafml"', content, count=1)
+
+            else:
+
+                # 1.18 及以后使用 lowcodefml
+
+                content = re.sub(r'modLoader\s*=\s*".*?"', r'modLoader="lowcodefml"', content, count=1)
+
             return content.encode('utf-8')
 
         return filepath.read_bytes()
@@ -179,10 +215,10 @@ def get_archive_path(filepath: Path, pack_type: str, mc_version: str) -> str:
 
     parts = rel.parts
 
-    # 检查是否在版本目录下（如 6-1.16.2-1.16.5/minecraft/...）
+    # 检查是否在版本目录下（如 4-1.13–1.14.4/minecraft/...）
     if len(parts) >= 2:
         first_part = parts[0]
-        # 匹配版本目录格式：数字-版本号（如 6-1.16.2-1.16.5）
+        # 匹配版本目录格式：数字-版本号（如 4-1.13–1.14.4）
         if re.match(r'^\d+-', first_part):
             remaining_parts = parts[1:]
 
@@ -230,7 +266,11 @@ def build_datapack(version: str, mc_version: str, output_dir: Path):
     """构建 Datapack"""
     # 提取 MC 版本前缀
     mc_prefix = mc_version.split('-')[0]
-    filename = f"[Datapack]Extra Recipe-{version}-{mc_prefix}.zip"
+
+    # 在版本号后添加 MC 版本前缀
+    version_with_prefix = f"{version}-{mc_prefix}"
+
+    filename = f"[Datapack]Extra Recipe-{version_with_prefix}.zip"
     output_path = output_dir / filename
 
     print(f"📦 正在打包 Datapack: {filename} ...")
@@ -249,7 +289,7 @@ def build_datapack(version: str, mc_version: str, output_dir: Path):
             config_path = PROJECT_DIR / config_file
             if config_path.exists():
                 if config_file == 'pack.mcmeta':
-                    content = get_modified_content(config_path, 'datapack', version, mc_version)
+                    content = get_modified_content(config_path, 'datapack', version_with_prefix, mc_version)
                 else:
                     content = config_path.read_bytes()
                 zf.writestr(config_file, content)
@@ -280,7 +320,11 @@ def build_all_loader(version: str, mc_version: str, output_dir: Path):
     """构建 All Loader 模组包"""
     # 提取 MC 版本前缀
     mc_prefix = mc_version.split('-')[0]
-    filename = f"[All Loader]Extra Recipe-{version}-{mc_prefix}.jar"
+
+    # 在版本号后添加 MC 版本前缀
+    version_with_prefix = f"{version}-{mc_prefix}"
+
+    filename = f"[All Loader]Extra Recipe-{version_with_prefix}.jar"
     output_path = output_dir / filename
 
     print(f"📦 正在打包 All Loader: {filename} ...")
@@ -289,6 +333,9 @@ def build_all_loader(version: str, mc_version: str, output_dir: Path):
     # 确定配方文件夹名称（1.21+ 使用 recipe，之前使用 recipes）
     pack_format = PACK_FORMAT_MAP.get(mc_version, 4)
     recipe_folder = 'recipe' if pack_format >= 48 else 'recipes'
+
+    # 判断是否需要包含 class 文件（1.17及以前需要，1.18及以后不需要）
+    include_class_files = pack_format < 8
 
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zf:
         # 添加所有配置文件和模组文件（不包括版本目录）
@@ -304,11 +351,16 @@ def build_all_loader(version: str, mc_version: str, output_dir: Path):
 
             for file in files:
                 filepath = Path(root) / file
+
+                # 如果不包含 class 文件，跳过 .class 文件
+                if not include_class_files and filepath.suffix == '.class':
+                    continue
+
                 if not should_include(filepath, 'all_loader'):
                     continue
 
                 arcname = get_archive_path(filepath, 'all_loader', mc_version)
-                content = get_modified_content(filepath, 'all_loader', version, mc_version)
+                content = get_modified_content(filepath, 'all_loader', version_with_prefix, mc_version)
                 zf.writestr(arcname, content)
 
         # 收集并添加配方文件（高版本包含低版本）
@@ -332,7 +384,6 @@ def build_all_loader(version: str, mc_version: str, output_dir: Path):
         print(f"   ✅ 已添加 {len(added_paths)} 个配方文件")
 
     print(f"✅ All Loader 打包成功: {output_path}")
-
 
 def list_versions():
     """列出所有支持的 Minecraft 版本"""
@@ -367,12 +418,13 @@ def interactive_mode():
     list_versions()
     print("  all: 一次性打包所有版本")
 
-    mc_version = "15-1.20–1.20.1"  # 设置默认值
+    mc_version = "all"  # 设置默认值
     batch_mode = False
     while True:
-        mc_choice = input("\n请输入版本前缀、all 或直接输入完整版本标识 (默认: 15-1.20–1.20.1): ").strip()
+        mc_choice = input(f"\n请输入版本前缀、all 或直接输入完整版本标识 (默认: {mc_version}): ").strip()
 
         if not mc_choice:
+            batch_mode = True
             break
 
         # 检查是否为批量模式
@@ -566,6 +618,12 @@ def cli_mode(args):
         print(f"   失败: {fail_count} 个版本")
         print(f"📁 产物已保存至: {output_dir}")
     else:
+        # 验证版本标识是否有效
+        if mc_version not in PACK_FORMAT_MAP:
+            print(f"❌ 错误: 无效的版本标识 '{mc_version}'")
+            print("请使用 --list 查看支持的版本，或使用 'all' 打包所有版本")
+            sys.exit(1)
+
         # 单个版本打包
         print(f"🚀 开始打包 Extra Recipe v{version} (目标 MC: {mc_version})")
         print(f"📁 输出目录: {output_dir}")
@@ -591,7 +649,7 @@ def main():
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="""
 示例用法:
-  python packed.py 4.0.0 6-1.16.2-1.16.5    打包指定版本
+  python packed.py 4.0.0 4-1.13–1.14.4    打包指定版本
   python packed.py 4.0.0 all                  打包所有版本
   python packed.py 4.0.0                      使用默认 MC 版本 (1.20.1)
   python packed.py --list                     列出所有支持的 MC 版本
@@ -599,10 +657,9 @@ def main():
   python packed.py 4.0.0 --only all_loader    仅打包 All Loader
             """
         )
-
         parser.add_argument('version', nargs='?', help='模组版本号 (例如: 4.0.0)')
-        parser.add_argument('mc_version', nargs='?', default='1.20.1',
-                            help='Minecraft 版本标识 (例如: 6-1.16.2-1.16.5, 默认: 1.20.1, 使用 all 打包所有版本)')
+        parser.add_argument('mc_version', nargs='?', default='all',
+                            help='Minecraft 版本标识 (例如: 4-1.13–1.14.4, 默认: all, 使用 all 打包所有版本)')
         parser.add_argument('--list', '-l', action='store_true', help='列出所有支持的 Minecraft 版本')
         parser.add_argument('--only', '-o', choices=['datapack', 'all_loader'],
                             help='仅打包指定类型 (datapack 或 all_loader)')
