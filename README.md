@@ -47,3 +47,10 @@ About file suffix: The suffix represents the supported version. See below for sp
 | -88.0          | 1.21.9 – 1.21.10  |
 | -94.1          | 1.21.11           |
 | -101.1         | 26.1              |
+
+## Other Link
+
+* [Old repository](https://github.com/CTNStudio/ExtraRecipe)
+* [Mcmod](https://mcmod.cn/class/7424.html)
+* [KlPBBS](https://klpbbs.com/thread-123702-1-1.html)
+* [MCBBS](https://www.mcbbs.net/thread-1431124-1-1.html)
