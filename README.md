@@ -6,8 +6,9 @@
 <a href="https://modrinth.com/datapack/extra-recipe">
   <img src="https://img.shields.io/modrinth/dt/7AXsRqp1?style=for-the-badge&logo=modrinth&link=https%3A%2F%2Fmodrinth.com%2Fdatapack%2Fextra-recipe"/>
 </a>
-<a href="https://github.com/CTNStudio/ExtraRecipe">
-  <img src="https://img.shields.io/github/last-commit/CTNStudio/ExtraRecipe?display_timestamp=committer&style=for-the-badge&logo=github&link=https%3A%2F%2Fgithub.com%2FCTNStudio%2FExtraRecipe"/>
+<a href="https://github.com/CTNStudio/Extra-Recipe">
+  <img src="https://img.shields.io/github/last-commit/CTNStudio/Extra-Recipe?display_timestamp=committer&style=for-the-badge&logo=github&link=https%3A%2F%2Fgithub.com%2FCTNStudio%2FExtra-Recipe
+  "/>
 </a>
 </div>
 

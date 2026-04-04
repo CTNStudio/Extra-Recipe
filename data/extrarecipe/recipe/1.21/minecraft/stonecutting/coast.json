@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "tag": "extra_recipe:cobblestone_atst"
+  },
+  "result": {
+    "id": "minecraft:coast_armor_trim_smithing_template",
+    "count": 1
+  }
+}

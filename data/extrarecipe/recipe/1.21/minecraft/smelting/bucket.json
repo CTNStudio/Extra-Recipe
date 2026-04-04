@@ -1,0 +1,9 @@
+{
+    "type": "minecraft:smelting",
+    "ingredient": {
+        "item": "minecraft:water_bucket"
+    },
+    "result": {
+        "id": "minecraft:bucket"
+    }
+}

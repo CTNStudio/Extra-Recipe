@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "minecraft:chipped_anvil"
+  },
+  "result": {
+    "id": "minecraft:damaged_anvil",
+    "count": 1
+  }
+}
