@@ -1,9 +1,0 @@
-{
-    "type": "minecraft:smelting",
-    "ingredient": {
-        "item": "minecraft:shulker_shell"
-    },
-    "result": {
-        "id": "minecraft:popped_chorus_fruit"
-    }
-}
