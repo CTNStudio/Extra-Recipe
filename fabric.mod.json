@@ -1,0 +1,22 @@
+{
+    "schemaVersion": 1,
+    "id": "extrarecipe",
+    "version": "4.0-48",
+    "name": "Extra Recipe",
+    "description": "Added more recipes for the vanilla and other mods!",
+    "authors": [
+        "Black_Moss",
+        "RawDiamondMC"
+    ],
+    "contact": {
+        "homepage": "https://modrinth.com/datapack/extra-recipe",
+        "sources": "https://github.com/CTNStudio/Extra-Recipe",
+        "issues": "https://github.com/CTNStudio/Extra-Recipe/issues"
+    },
+    "license": "MIT",
+    "icon": "pack.png",
+    "environment": "*",
+    "depends": {
+        "fabric-resource-loader-v0": "*"
+    }
+}
