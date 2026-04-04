@@ -37,80 +37,6 @@ PACK_FORMAT_MAP = {
 IGNORE_NAMES = {'packed.py', 'output', '.git', '__pycache__', '.idea', 'venv', 'env', '.DS_Store'}
 
 
-def get_modified_content(filepath: Path, pack_type: str, version: str, mc_version: str) -> bytes:
-    name = filepath.name
-    try:
-        if name in ('pack.mcmeta', 'fabric.mod.json', 'quilt.mod.json'):
-            with open(filepath, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-
-            if name == 'pack.mcmeta':
-                data.setdefault('pack', {})['pack_format'] = PACK_FORMAT_MAP.get(mc_version, 4)
-                data.setdefault('pack', {})['description'] = f"Extra Recipe v{version}"
-                if pack_type == 'datapack':
-                    for key in ('fabric', 'quilt', 'forge', 'neoforge'):
-                        data.pop(key, None)
-            elif name in ('fabric.mod.json', 'quilt.mod.json'):
-                data['version'] = version
-
-            return json.dumps(data, indent=2, ensure_ascii=False).encode('utf-8')
-
-        elif name == 'mods.toml':
-            content = filepath.read_text(encoding='utf-8')
-            content = re.sub(r'(\[\[mods]][\s\S]*?version\s*=\s*)".*?"', rf'\1"{version}"', content, count=1)
-            content = re.sub(r'(displayName\s*=\s*)".*?"', rf'\1"Extra Recipe v{version}"', content, count=1)
-            return content.encode('utf-8')
-
-        return filepath.read_bytes()
-
-    except Exception as e:
-        print(f"⚠️  读取/修改 {filepath.name} 失败: {e}，将使用原始文件。")
-        return filepath.read_bytes()
-
-
-def should_include(filepath: Path, pack_type: str) -> bool:
-    """判断文件是否应包含在当前包中"""
-    rel = filepath.relative_to(PROJECT_DIR)
-
-    if filepath.name in IGNORE_NAMES or filepath.parent.name in IGNORE_NAMES:
-        return False
-    if filepath.is_dir() and filepath.name.startswith('.') and filepath.name != 'META-INF':
-        return False
-
-    if pack_type == 'datapack':
-        if filepath.name in ('fabric.mod.json', 'quilt.mod.json', 'mods.toml'):
-            return False
-        if 'META-INF' in rel.parts:
-            return False
-        return True
-    else:
-        return True
-
-
-def get_archive_path(filepath: Path, pack_type: str, mc_version: str) -> str:
-    """计算文件在压缩包中的路径"""
-    rel = filepath.relative_to(PROJECT_DIR)
-
-    # 配置文件保持在根目录
-    if filepath.name in ('pack.mcmeta', 'fabric.mod.json', 'quilt.mod.json', 'mods.toml', 'MANIFEST.MF'):
-        return rel.as_posix()
-
-    parts = rel.parts
-
-    # 检查是否在版本目录下（如 6-1.16.2-1.16.5/minecraft/...）
-    if len(parts) >= 2:
-        first_part = parts[0]
-        # 匹配版本目录格式：数字-版本号（如 6-1.16.2-1.16.5）
-        if re.match(r'^\d+-', first_part):
-            remaining_parts = parts[1:]
-
-            # 两种包都是: data/extrarecipe/recipes/minecraft/...
-            new_path = Path('data/extrarecipe/recipes') / '/'.join(remaining_parts)
-            return new_path.as_posix()
-
-    return rel.as_posix()
-
-
 def get_version_order():
     """获取按版本号排序的版本列表"""
 
@@ -166,6 +92,140 @@ def collect_recipe_files(mc_version: str) -> list:
     return collected_files
 
 
+def convert_recipe_for_1_21(data: dict) -> dict:
+    """将旧版本配方格式转换为 1.21+ 的新格式"""
+    recipe_type = data.get('type', '')
+
+    # crafting_shaped 和 crafting_shapeless: result.item -> result.id
+    if recipe_type in ('minecraft:crafting_shaped', 'minecraft:crafting_shapeless'):
+        if 'result' in data and isinstance(data['result'], dict):
+            if 'item' in data['result']:
+                data['result']['id'] = data['result'].pop('item')
+
+    # smelting, blasting, smoking, campfire_cooking: result 字符串 -> result 对象
+    elif recipe_type in ('minecraft:smelting', 'minecraft:blasting', 'minecraft:smoking', 'minecraft:campfire_cooking'):
+        if 'result' in data and isinstance(data['result'], str):
+            data['result'] = {"id": data['result']}
+
+    # stonecutting: result 字符串 -> result 对象
+    elif recipe_type == 'minecraft:stonecutting':
+        if 'result' in data and isinstance(data['result'], str):
+            data['result'] = {"id": data['result']}
+        # stonecutting 不需要 count 字段在 result 外面
+        if 'count' in data:
+            del data['count']
+
+    return data
+
+
+def get_modified_content(filepath: Path, pack_type: str, version: str, mc_version: str) -> bytes:
+    name = filepath.name
+    try:
+        if name in ('pack.mcmeta', 'fabric.mod.json', 'quilt.mod.json'):
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            if name == 'pack.mcmeta':
+                data.setdefault('pack', {})['pack_format'] = PACK_FORMAT_MAP.get(mc_version, 4)
+                data.setdefault('pack', {})['description'] = f"Extra Recipe v{version}"
+                if pack_type == 'datapack':
+                    for key in ('fabric', 'quilt', 'forge', 'neoforge'):
+                        data.pop(key, None)
+            elif name in ('fabric.mod.json', 'quilt.mod.json'):
+                data['version'] = version
+
+            return json.dumps(data, indent=2, ensure_ascii=False).encode('utf-8')
+
+        elif name == 'mods.toml':
+            content = filepath.read_text(encoding='utf-8')
+            content = re.sub(r'(\[\[mods]][\s\S]*?version\s*=\s*)".*?"', rf'\1"{version}"', content, count=1)
+            content = re.sub(r'(displayName\s*=\s*)".*?"', rf'\1"Extra Recipe v{version}"', content, count=1)
+            return content.encode('utf-8')
+
+        return filepath.read_bytes()
+
+    except Exception as e:
+        print(f"⚠️  读取/修改 {filepath.name} 失败: {e}，将使用原始文件。")
+        return filepath.read_bytes()
+
+
+def should_include(filepath: Path, pack_type: str) -> bool:
+
+    """判断文件是否应包含在当前包中"""
+    rel = filepath.relative_to(PROJECT_DIR)
+
+    if filepath.name in IGNORE_NAMES or filepath.parent.name in IGNORE_NAMES:
+        return False
+    if filepath.is_dir() and filepath.name.startswith('.') and filepath.name != 'META-INF':
+        return False
+
+    if pack_type == 'datapack':
+        if filepath.name in ('fabric.mod.json', 'quilt.mod.json', 'mods.toml'):
+            return False
+        if 'META-INF' in rel.parts:
+            return False
+        return True
+    else:
+        return True
+
+
+def get_archive_path(filepath: Path, pack_type: str, mc_version: str) -> str:
+    """计算文件在压缩包中的路径"""
+    rel = filepath.relative_to(PROJECT_DIR)
+
+    # 配置文件保持在根目录
+    if filepath.name in ('pack.mcmeta', 'fabric.mod.json', 'quilt.mod.json', 'mods.toml', 'MANIFEST.MF'):
+        return rel.as_posix()
+
+    parts = rel.parts
+
+    # 检查是否在版本目录下（如 6-1.16.2-1.16.5/minecraft/...）
+    if len(parts) >= 2:
+        first_part = parts[0]
+        # 匹配版本目录格式：数字-版本号（如 6-1.16.2-1.16.5）
+        if re.match(r'^\d+-', first_part):
+            remaining_parts = parts[1:]
+
+            # 1.21+ (pack_format >= 48) 使用 recipe，之前版本使用 recipes
+            pack_format = PACK_FORMAT_MAP.get(mc_version, 4)
+            recipe_folder = 'recipe' if pack_format >= 48 else 'recipes'
+
+            new_path = Path(f'data/extrarecipe/{recipe_folder}') / '/'.join(remaining_parts)
+            return new_path.as_posix()
+
+    return rel.as_posix()
+
+
+def convert_recipe_file(filepath: Path, mc_version: str) -> bytes:
+    """如果需要，转换配方文件格式"""
+    try:
+        # 检查是否需要转换（1.21+ 版本，pack_format >= 48）
+        pack_format = PACK_FORMAT_MAP.get(mc_version, 4)
+        if pack_format < 48:
+            return filepath.read_bytes()
+
+        # 只处理 JSON 文件
+        if not filepath.suffix == '.json':
+            return filepath.read_bytes()
+
+        # 读取并解析 JSON
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        # 检查是否是配方文件
+        if 'type' not in data:
+            return filepath.read_bytes()
+
+        # 转换格式
+        converted_data = convert_recipe_for_1_21(data)
+
+        return json.dumps(converted_data, indent=2, ensure_ascii=False).encode('utf-8')
+
+    except Exception as e:
+        print(f"   ⚠️  转换配方 {filepath.name} 失败: {e}，使用原始文件")
+        return filepath.read_bytes()
+
+
 def build_datapack(version: str, mc_version: str, output_dir: Path):
     """构建 Datapack"""
     # 提取 MC 版本前缀
@@ -178,6 +238,10 @@ def build_datapack(version: str, mc_version: str, output_dir: Path):
 
     # 收集配方文件
     recipe_files = collect_recipe_files(mc_version)
+
+    # 确定配方文件夹名称（1.21+ 使用 recipe，之前使用 recipes）
+    pack_format = PACK_FORMAT_MAP.get(mc_version, 4)
+    recipe_folder = 'recipe' if pack_format >= 48 else 'recipes'
 
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zf:
         # 添加配置文件（pack.mcmeta, pack.png, README.md）
@@ -194,13 +258,14 @@ def build_datapack(version: str, mc_version: str, output_dir: Path):
         # 添加配方文件（高版本包含低版本）
         added_paths = set()
         for filepath, rel_path, source_version in recipe_files:
-            # 构建归档路径: data/extrarecipe/recipes/{相对路径}
-            arcname = f"data/extrarecipe/recipes/{rel_path.as_posix()}"
+            # 构建归档路径: data/extrarecipe/{recipe_folder}/{相对路径}
+            arcname = f"data/extrarecipe/{recipe_folder}/{rel_path.as_posix()}"
 
             # 避免重复添加（如果高版本有同名文件，使用高版本的）
             if arcname not in added_paths:
                 try:
-                    content = filepath.read_bytes()
+                    # 根据目标版本转换配方格式
+                    content = convert_recipe_file(filepath, mc_version)
                     zf.writestr(arcname, content)
                     added_paths.add(arcname)
                 except Exception as e:
@@ -220,6 +285,10 @@ def build_all_loader(version: str, mc_version: str, output_dir: Path):
 
     print(f"📦 正在打包 All Loader: {filename} ...")
     print(f"   目标版本: {mc_version}")
+
+    # 确定配方文件夹名称（1.21+ 使用 recipe，之前使用 recipes）
+    pack_format = PACK_FORMAT_MAP.get(mc_version, 4)
+    recipe_folder = 'recipe' if pack_format >= 48 else 'recipes'
 
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zf:
         # 添加所有配置文件和模组文件（不包括版本目录）
@@ -248,12 +317,13 @@ def build_all_loader(version: str, mc_version: str, output_dir: Path):
         added_paths = set()
         for filepath, rel_path, source_version in recipe_files:
             # 构建归档路径
-            arcname = f"data/extrarecipe/recipes/{rel_path.as_posix()}"
+            arcname = f"data/extrarecipe/{recipe_folder}/{rel_path.as_posix()}"
 
             # 避免重复添加
             if arcname not in added_paths:
                 try:
-                    content = filepath.read_bytes()
+                    # 根据目标版本转换配方格式
+                    content = convert_recipe_file(filepath, mc_version)
                     zf.writestr(arcname, content)
                     added_paths.add(arcname)
                 except Exception as e:
