@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " 3 ",
+    "212",
+    " 3 "
+  ],
+  "key": {
+    "1": {
+      "item": "twilightforest:root"
+    },
+    "2": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "3": {
+      "item": "minecraft:bone_meal"
+    }
+  },
+  "result": {
+    "id": "twilightforest:liveroot",
+    "count": 2
+  }
+}

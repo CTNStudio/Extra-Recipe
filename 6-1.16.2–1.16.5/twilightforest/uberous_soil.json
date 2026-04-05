@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "111",
+    "121",
+    "111"
+  ],
+  "key": {
+    "1": {
+      "item": "minecraft:dirt"
+    },
+    "2": {
+      "item": "minecraft:bone_block"
+    }
+  },
+  "result": {
+    "id": "twilightforest:uberous_soil",
+    "count": 8
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern":[
+    "131",
+    "323",
+    "131"
+  ],
+  "key": {
+    "1": {
+      "item": "twilightforest:encased_towerwood"
+    },
+    "2": {
+      "item": "twilightforest:tower_key"
+    },
+    "3":{
+      "tag": "twilightforest:towerwood"
+    }
+  },
+  "result":{
+    "id": "twilightforest:locked_vanishing_block",
+    "count": 1
+  }
+}

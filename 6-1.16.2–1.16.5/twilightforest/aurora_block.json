@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "222",
+    "212",
+    "222"
+  ],
+  "key": {
+    "1": {
+      "item": "twilightforest:transformation_powder"
+    },
+    "2": {
+      "tag": "minecraft:terracotta"
+    }
+  },
+  "result": {
+    "id": "twilightforest:aurora_block",
+    "count": 8
+  }
+}

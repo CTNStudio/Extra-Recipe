@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "313",
+    "121",
+    "313"
+  ],
+  "key": {
+    "1": {
+      "item": "minecraft:blue_dye"
+    },
+    "2": {
+      "item": "twilightforest:arctic_fur"
+    },
+    "3": {
+      "item": "minecraft:snow"
+    }
+  },
+  "result": {
+    "id": "twilightforest:alpha_yeti_fur",
+    "count": 1
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " 1 ",
+    "121",
+    " 1 "
+  ],
+  "key": {
+    "1": {
+      "item": "twilightforest:liveroot"
+    },
+    "2":{
+      "item": "twilightforest:root"
+    }
+  },
+  "result":{
+    "id": "twilightforest:liveroot_block",
+    "count": 1
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "212",
+    "232",
+    " 4 "
+  ],
+  "key": {
+    "1": {
+      "item": "minecraft:ghast_tear"
+    },
+    "2": {
+      "item": "minecraft:blaze_powder"
+    },
+    "3": {
+      "item": "minecraft:potion"
+    },
+    "4": {
+      "item": "twilightforest:fiery_tears"
+    }
+  },
+  "result": {
+    "id": "twilightforest:fiery_tears",
+    "count": 2
+  }
+}
