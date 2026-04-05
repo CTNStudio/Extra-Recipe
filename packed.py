@@ -118,6 +118,23 @@ def convert_recipe_for_1_21(data: dict) -> dict:
     return data
 
 
+def convert_pottery_shard_to_sherd(data):
+    """将 1.20 之前的 pottery_shard 转换为 1.20+ 的 pottery_sherd"""
+
+    # 递归处理 JSON 数据中的所有字符串值
+    def replace_in_value(obj):
+        if isinstance(obj, dict):
+            return {k: replace_in_value(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [replace_in_value(item) for item in obj]
+        elif isinstance(obj, str):
+            # 替换所有 pottery_shard 为 pottery_sherd
+            return obj.replace('pottery_shard', 'pottery_sherd')
+        else:
+            return obj
+
+    return replace_in_value(data)
+
 def get_modified_content(filepath: Path, pack_type: str, version: str, mc_version: str) -> bytes:
     name = filepath.name
     try:
@@ -262,7 +279,38 @@ def convert_recipe_file(filepath: Path, mc_version: str) -> bytes:
         return filepath.read_bytes()
 
 
+def convert_pottery_file(filepath: Path, mc_version: str) -> bytes:
+    """如果需要，转换陶片文件格式（1.20+ 从 shard 改为 sherd）"""
+    try:
+        # 检查目标版本是否为 1.20+ (pack_format >= 15)
+        pack_format = PACK_FORMAT_MAP.get(mc_version, 4)
+        if pack_format < 15:
+            return filepath.read_bytes()
+
+        # 只处理 JSON 文件
+        if not filepath.suffix == '.json':
+            return filepath.read_bytes()
+
+        # 只处理包含 pottery_shard 的文件
+        if 'pottery_shard' not in filepath.name:
+            return filepath.read_bytes()
+
+        # 读取并解析 JSON
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        # 转换 pottery_shard 为 pottery_sherd
+        converted_data = convert_pottery_shard_to_sherd(data)
+
+        return json.dumps(converted_data, indent=2, ensure_ascii=False).encode('utf-8')
+
+    except Exception as e:
+        print(f"   ⚠️  转换陶片文件 {filepath.name} 失败: {e}，使用原始文件")
+        return filepath.read_bytes()
+
+
 def build_datapack(version: str, mc_version: str, output_dir: Path):
+
     """构建 Datapack"""
     # 提取 MC 版本前缀
     mc_prefix = mc_version.split('-')[0]
@@ -298,14 +346,24 @@ def build_datapack(version: str, mc_version: str, output_dir: Path):
         # 添加配方文件（高版本包含低版本）
         added_paths = set()
         for filepath, rel_path, source_version in recipe_files:
-            # 构建归档路径: data/extrarecipe/{recipe_folder}/{相对路径}
+            # 构建归档路径
             arcname = f"data/extrarecipe/{recipe_folder}/{rel_path.as_posix()}"
 
-            # 避免重复添加（如果高版本有同名文件，使用高版本的）
+            # 避免重复添加
             if arcname not in added_paths:
                 try:
                     # 根据目标版本转换配方格式
                     content = convert_recipe_file(filepath, mc_version)
+
+                    # 如果是陶片文件且目标是 1.20+，还需要转换 shard -> sherd
+                    is_pottery_shard = 'pottery_shard' in filepath.name
+                    if is_pottery_shard:
+                        content = convert_pottery_file(filepath, mc_version)
+                        # 修改文件名：将 pottery_shard 改为 pottery_sherd
+                        pack_format = PACK_FORMAT_MAP.get(mc_version, 4)
+                        if pack_format >= 15:
+                            arcname = arcname.replace('pottery_shard', 'pottery_sherd')
+
                     zf.writestr(arcname, content)
                     added_paths.add(arcname)
                 except Exception as e:
@@ -313,10 +371,10 @@ def build_datapack(version: str, mc_version: str, output_dir: Path):
 
         print(f"   ✅ 已添加 {len(added_paths)} 个配方文件")
 
-    print(f"✅ Datapack 打包成功: {output_path}")
-
+    print(f"✅ All Loader 打包成功: {output_path}")
 
 def build_all_loader(version: str, mc_version: str, output_dir: Path):
+
     """构建 All Loader 模组包"""
     # 提取 MC 版本前缀
     mc_prefix = mc_version.split('-')[0]
@@ -376,6 +434,16 @@ def build_all_loader(version: str, mc_version: str, output_dir: Path):
                 try:
                     # 根据目标版本转换配方格式
                     content = convert_recipe_file(filepath, mc_version)
+
+                    # 如果是陶片文件且目标是 1.20+，还需要转换 shard -> sherd
+                    is_pottery_shard = 'pottery_shard' in filepath.name
+                    if is_pottery_shard:
+                        content = convert_pottery_file(filepath, mc_version)
+                        # 修改文件名：将 pottery_shard 改为 pottery_sherd
+                        pack_format = PACK_FORMAT_MAP.get(mc_version, 4)
+                        if pack_format >= 15:
+                            arcname = arcname.replace('pottery_shard', 'pottery_sherd')
+
                     zf.writestr(arcname, content)
                     added_paths.add(arcname)
                 except Exception as e:
