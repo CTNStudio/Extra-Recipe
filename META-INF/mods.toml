@@ -1,8 +1,8 @@
 modLoader="lowcodefml"
-loaderVersion = '[34,)'
+loaderVersion = '[28,)'
 license = 'MIT License'
 showAsResourcePack = false
 mods = [
-	{ modId = 'extrarecipe', version = '4.0.0', displayName = 'Extra Recipe', description = 'Added more recipes for the vanilla and other mods!', logoFile = 'pack.png', updateJSONURL = 'https://api.modrinth.com/updates/7AXsRqp1/forge_updates.json', credits = 'CTN Studio', authors = 'Black_Moss, RawDiamondMC', displayURL = 'https://modrinth.com/datapack/extra-recipe' },
+	{ modId = 'extrarecipe', version = 'X.X.X-x', displayName = 'Extra Recipe', description = 'Added more recipes for the vanilla and other mods!', logoFile = 'pack.png', updateJSONURL = 'https://api.modrinth.com/updates/7AXsRqp1/forge_updates.json', credits = 'CTN Studio', authors = 'Black_Moss, RawDiamondMC', displayURL = 'https://modrinth.com/datapack/extra-recipe' },
 ]
 issueTrackerURL = 'https://github.com/CTNStudio/Extra-Recipe/issues'

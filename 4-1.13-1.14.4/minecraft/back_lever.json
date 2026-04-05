@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "minecraft:stick"
+    },
+    "$": {
+      "item": "minecraft:stone"
+    }
+  },
+  "pattern": [
+    "#",
+    "$"
+  ],
+  "result": {
+    "item": "minecraft:lever",
+    "count": 1
+  }
+}

@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:campfire_cooking",
+    "ingredient": {
+        "item": "minecraft:shulker_shell"
+    },
+    "result": "minecraft:popped_chorus_fruit"
+}

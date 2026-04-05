@@ -3,8 +3,6 @@
   "ingredient": {
     "tag": "minecraft:decorated_pot_ingredients"
   },
-  "result": {
-    "id": "minecraft:blade_pottery_shard",
-    "count": 1
-  }
+  "result": "minecraft:blade_pottery_shard",
+  "count": 1
 }

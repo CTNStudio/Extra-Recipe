@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "item": "minecraft:chest"
+  },
+  "ingredients": [
+    [
+      {
+        "item": "ironchest:dirt_chest"
+      }
+    ]
+  ]
+}

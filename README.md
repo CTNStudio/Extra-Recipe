@@ -1,12 +1,15 @@
 <div align="center">
 <a href="https://www.curseforge.com/minecraft/mc-mods/extra-recipe">
-  <img src="https://img.shields.io/curseforge/dt/981858?style=for-the-badge&logo=curseforge&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fextra-recipe"/>
+  <img src="https://img.shields.io/curseforge/dt/981858?style=for-the-badge&logo=curseforge&color=%23F16436&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fextra-recipe"/>
 </a>
 <a href="https://modrinth.com/datapack/extra-recipe">
-  <img src="https://img.shields.io/modrinth/dt/7AXsRqp1?style=for-the-badge&logo=modrinth&link=https%3A%2F%2Fmodrinth.com%2Fdatapack%2Fextra-recipe"/>
+  <img src="https://img.shields.io/modrinth/dt/7AXsRqp1?style=for-the-badge&logo=modrinth&color=%2300AF5C&link=https%3A%2F%2Fmodrinth.com%2Fdatapack%2Fextra-recipe"/>
 </a>
 <a href="https://github.com/CTNStudio/Extra-Recipe">
-  <img src="https://img.shields.io/github/last-commit/CTNStudio/Extra-Recipe?display_timestamp=committer&style=for-the-badge&logo=github&link=https%3A%2F%2Fgithub.com%2FCTNStudio%2FExtra-Recipe"/>
+  <img src="https://img.shields.io/github/last-commit/CTNStudio/Extra-Recipe?display_timestamp=committer&style=for-the-badge&logo=github&color=%23181717&link=https%3A%2F%2Fgithub.com%2FCTNStudio%2FExtra-Recipe"/>
+</a>
+<a href="https://discord.gg/ZUzg99PDsw">
+  <img src="https://img.shields.io/discord/1152184082130813009?style=for-the-badge&logo=discord&color=%235865F2&cacheSeconds=https%3A%2F%2Fdiscord.gg%2F2Eb53FxvYf&link=https%3A%2F%2Fdiscord.gg%2FZUzg99PDsw"/>
 </a>
 </div>
 
@@ -50,7 +53,7 @@ About file suffix: The suffix represents the supported version. See below for sp
 
 ## Other Link
 
-* [Old repository](https://github.com/CTNStudio/ExtraRecipe)
+* Old repositories:[CTN Studio](https://github.com/CTNStudio/ExtraRecipe) / [YTXSY](https://github.com/YTXSY/ExtraRecipe-1.12.2-Forge)
 * [Mcmod](https://mcmod.cn/class/7424.html)
-* [KlPBBS](https://klpbbs.com/thread-123702-1-1.html)
+* [KLPBBS](https://klpbbs.com/thread-123702-1-1.html)
 * [MCBBS](https://www.mcbbs.net/thread-1431124-1-1.html)

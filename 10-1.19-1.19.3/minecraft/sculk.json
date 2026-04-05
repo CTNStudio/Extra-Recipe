@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "item": "minecraft:sculk",
+    "count": 1
+  },
+  "ingredients": [
+    [
+      {
+        "item": "minecraft:sculk_vein"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:sculk_vein"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:stone"
+      }
+    ]
+  ]
+}

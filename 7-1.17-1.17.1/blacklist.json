@@ -1,0 +1,8 @@
+{
+  "skip_namespaces": [
+    "ironshulkerbox"
+  ],
+  "skip_recipes": [],
+  "allow_namespaces": [],
+  "allow_recipes": []
+}

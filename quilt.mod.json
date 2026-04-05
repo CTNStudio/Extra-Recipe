@@ -3,11 +3,12 @@
     "quilt_loader": {
         "group": "top.ctnstudio",
         "id": "extrarecipe",
-        "version": "4.0.0-7",
+        "version": "X.X.X-x",
         "metadata": {
             "name": "Extra Recipe",
             "description": "Added more recipes for the vanilla and other mods!",
             "contributors": {
+                "CTN Studio": "Develop Team",
                 "Black_Moss": "Owner",
                 "RawDiamondMC": "Contributor"
             },

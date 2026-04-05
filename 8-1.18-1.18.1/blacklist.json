@@ -1,0 +1,8 @@
+{
+  "skip_namespaces": [
+    "twilightforest"
+  ],
+  "skip_recipes": [],
+  "allow_namespaces": [],
+  "allow_recipes": []
+}

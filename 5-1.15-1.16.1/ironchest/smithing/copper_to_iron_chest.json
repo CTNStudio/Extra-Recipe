@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "ironchest:copper_chest"
+  },
+  "addition": {
+    "item": "ironchest:copper_iron_chest_upgrade"
+  },
+  "result": {
+    "item": "ironchest:iron_chest"
+  }
+}

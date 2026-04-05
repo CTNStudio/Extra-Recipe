@@ -1,0 +1,11 @@
+{
+  "skip_namespaces": [],
+  "skip_recipes": [
+    "minecraft:smithing/petrified_oak_slab"
+  ],
+  "allow_namespaces": [
+    "twilightforest",
+    "ironshulkerbox"
+  ],
+  "allow_recipes": []
+}

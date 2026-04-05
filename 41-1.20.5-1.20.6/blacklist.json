@@ -1,0 +1,9 @@
+{
+  "skip_namespaces": [
+    "ad_astra",
+    "ironshulkerbox"
+  ],
+  "skip_recipes": [],
+  "allow_namespaces": [],
+  "allow_recipes": []
+}

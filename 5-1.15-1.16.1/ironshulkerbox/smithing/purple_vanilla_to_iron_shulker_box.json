@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "minecraft:blue_shulker_box"
+  },
+  "addition": {
+    "item": "ironshulkerbox:vanilla_to_iron_shulker_box_upgrade"
+  },
+  "result": {
+    "item": "ironshulkerbox:iron_shulker_box_purple"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "item": "minecraft:flowering_azalea",
+    "count": 1
+  },
+  "ingredients": [
+    [
+      {
+        "item": "minecraft:azalea"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:bone_meal"
+      }
+    ]
+  ]
+}

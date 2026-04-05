@@ -1,10 +1,11 @@
 {
     "schemaVersion": 1,
     "id": "extrarecipe",
-    "version": "4.0.0-7",
+    "version": "X.X.X-x",
     "name": "Extra Recipe",
     "description": "Added more recipes for the vanilla and other mods!",
     "authors": [
+        "CTN Studio",
         "Black_Moss",
         "RawDiamondMC"
     ],
@@ -13,7 +14,7 @@
         "sources": "https://github.com/CTNStudio/Extra-Recipe",
         "issues": "https://github.com/CTNStudio/Extra-Recipe/issues"
     },
-    "license": "MIT",
+    "license": "MIT License",
     "icon": "pack.png",
     "environment": "*",
     "depends": {

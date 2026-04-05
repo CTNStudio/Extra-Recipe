@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "minecraft:sculk"
+    },
+    "$": {
+      "item": "minecraft:stone"
+    }
+  },
+  "pattern": [
+    "##",
+    "$$"
+  ],
+  "result": {
+    "item": "minecraft:sculk_catalyst",
+    "count": 1
+  }
+}

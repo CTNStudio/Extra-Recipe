@@ -1,0 +1,10 @@
+{
+  "skip_namespaces": [
+    "ad_astra"
+  ],
+  "skip_recipes": [],
+  "allow_namespaces": [
+    "twilightforest"
+  ],
+  "allow_recipes": []
+}

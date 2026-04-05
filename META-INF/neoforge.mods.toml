@@ -1,0 +1,22 @@
+modLoader="javafml"
+loaderVersion="[2,)"
+license="MIT License"
+issueTrackerURL="https://github.com/CTNStudio/Extra-Recipe/issues"
+
+[[mods]]
+modId="extrarecipe"
+version="X.X.X-x"
+displayName="Extra Recipe"
+description="Added more recipes for the vanilla and other mods!"
+logoFile="pack.png"
+displayURL="https://modrinth.com/datapack/extra-recipe"
+credits="CTN Studio"
+authors="Black_Moss, RawDiamondMC"
+
+[[dependencies.extrarecipe]]
+modId="neoforge"
+type="required"
+versionRange="[21,)"
+ordering="NONE"
+side="BOTH"
+

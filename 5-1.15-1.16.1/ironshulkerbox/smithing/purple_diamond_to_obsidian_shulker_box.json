@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "ironshulkerbox:diamond_shulker_box_purple"
+  },
+  "addition": {
+    "item": "ironshulkerbox:diamond_obsidian_shulker_box_upgrade"
+  },
+  "result": {
+    "item": "ironshulkerbox:obsidian_shulker_box_purple"
+  }
+}

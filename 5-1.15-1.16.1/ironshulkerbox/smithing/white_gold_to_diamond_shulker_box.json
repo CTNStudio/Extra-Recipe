@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "ironshulkerbox:gold_shulker_box_white"
+  },
+  "addition": {
+    "item": "ironshulkerbox:gold_diamond_shulker_box_upgrade"
+  },
+  "result": {
+    "item": "ironshulkerbox:diamond_shulker_box_white"
+  }
+}

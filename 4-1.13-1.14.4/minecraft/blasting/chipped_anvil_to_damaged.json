@@ -1,0 +1,9 @@
+{
+    "type": "minecraft:blasting",
+    "cookingtime": 900,
+    "experience": 9,
+    "ingredient": {
+        "item": "minecraft:chipped_anvil"
+    },
+    "result": "minecraft:damaged_anvil"
+}
