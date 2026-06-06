@@ -48,7 +48,8 @@ IGNORE_NAMES = {
     'venv',
     'env',
     '.DS_Store',
-    'blacklist.json'
+    'blacklist.json',
+    '.venv'
 }
 
 

@@ -1,5 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#$#",
+    " * "
+  ],
   "key": {
     "#": {
       "item": "twilightforest:dark_leaves"
@@ -11,12 +15,8 @@
       "item": "minecraft:dark_oak_sapling"
     }
   },
-  "pattern": [
-    "#$#",
-    " * "
-  ],
   "result": {
-    "id": "twilightforest:darkwood_sapling",
+    "item": "twilightforest:darkwood_sapling",
     "count": 1
   }
 }
