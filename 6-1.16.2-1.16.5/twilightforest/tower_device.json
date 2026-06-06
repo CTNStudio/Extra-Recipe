@@ -13,11 +13,10 @@
       "item": "twilightforest:carminite"
     },
     "3": {
-      "item": "twilightforest:tower_wood",
-      "data": 1
+      "tag": "twilightforest:towerwood"
     }
   },
   "result": {
-    "id": "twilightforest:tower_device"
+    "item": "twilightforest:tower_device"
   }
 }
