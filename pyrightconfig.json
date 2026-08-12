@@ -1,0 +1,13 @@
+{
+  "include": ["packed.py"],
+  "typeCheckingMode": "standard",
+  "reportExplicitAny": "none",
+  "reportAny": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnknownArgumentType": "none",
+  "reportUnknownVariableType": "none",
+  "reportUnknownParameterType": "none",
+  "reportUnknownLambdaType": "none",
+  "reportMissingTypeStubs": "none",
+  "reportUnnecessaryCast": "none"
+}

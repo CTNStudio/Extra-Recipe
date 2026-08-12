@@ -50,6 +50,7 @@ About file suffix: The suffix represents the supported version. See below for sp
 | -88.0          | 1.21.9 – 1.21.10  |
 | -94.1          | 1.21.11           |
 | -101.1         | 26.1              |
+| -107.1         | 26.2              |
 
 ## Other Link
 

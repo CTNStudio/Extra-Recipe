@@ -1,11 +1,17 @@
-# Extra Recipe Changelogs
+# Changelog
 
-## v4.0.2 (2026-04-10)
+All notable changes to this project are documented in this file.
 
-### Fixed
+The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-- Fix crash when loading Steel Block recipe.
+---
 
-### Removed
+## v4.0.4
 
-- Steel Block (`9-1.18.2/ad_astra/blast/steel_block`): this recipe caused the mod to crash.
+### Added
+
+- Compatibility with versions such as 26.2.
+
+### Changed
+
+- `Iron Chest` is no longer present in the `blacklist.json` of versions 94 through 107.

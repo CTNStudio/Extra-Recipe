@@ -1,8 +1,0 @@
-{
-  "skip_namespaces": [
-    "ironchest"
-  ],
-  "skip_recipes": [],
-  "allow_namespaces": [],
-  "allow_recipes": []
-}
