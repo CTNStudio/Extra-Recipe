@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## v4.0.4
 
+This version is limited to:
+- 94.1-1.21.11
+- 101.1-26.1
+- 107.1-26.2
+
 ### Added
 
 - Compatibility with versions such as 26.2.
