@@ -60,10 +60,11 @@ PACK_FORMAT_MAP: dict[str, int | float] = {
     "107.1-26.2": 107.1,
 }
 
-# 构建时忽略的文件/目录名
+# 构建时忽略的文件/目录名（按完整相对路径逐级匹配，见 _is_ignored_path）
 IGNORE_NAMES: frozenset[str] = frozenset[str]({
-    "packed.py", "output", ".git", "__pycache__",
-    ".idea", "venv", "env", ".DS_Store", "blacklist.json", ".venv",
+    "packed.py", "upload_modrinth.py", "list.ps1", "output", ".git", "__pycache__",
+    ".idea", ".gitignore", ".gitattributes", "pyrightconfig.json", "CODEBUDDY.md",
+    "venv", "env", ".venv", ".DS_Store", "blacklist.json",
 })
 
 # 保持在压缩包根目录的配置文件
@@ -378,7 +379,7 @@ def _convert_recipe_for_1_21(data: JsonObject, pack_format: int | float) -> Json
 
         if recipe_type == TYPE_SHAPED and "key" in data:
             data["key"] = (
-                _convert_tag_prefixes(items=list[Any](_convert_key_to_string(key_data=data["key"])))
+                {char: _ensure_tag_prefix(value=v) for char, v in _convert_key_to_string(key_data=data["key"]).items()}
                 if pack_format >= 57
                 else _convert_key_to_object(key_data=data["key"])
             )
@@ -469,9 +470,16 @@ def convert_pottery_file(filepath: Path, mc_version: str) -> bytes:
 # 路径与元数据
 # --------------------------------------------------------------------------- #
 def get_recipe_archive_path(rel_path: Path, mc_version: str) -> str:
-    """计算配方在压缩包内的归档路径（处理 recipe/recipes 切换与 smithing 重命名）。"""
+    """计算配方在压缩包内的归档路径。
+
+    归档路径统一为 data/extrarecipe/<recipe|recipes>/<namespace>/<...>，不含版本源目录名。
+    rel_path 形如 <版本目录>/<命名空间>/<类型>/<配方>.json 或 <版本目录>/<命名空间>/<配方>.json，
+    需剥掉开头的版本目录名；smithing 在 pack_format>=12 时重命名为 smithing_transform。
+    """
     pack_format: int | float = PACK_FORMAT_MAP.get(mc_version, 4)
     parts: tuple[str, ...] = rel_path.parts
+    if parts and _is_version_dir(name=parts[0]):
+        parts = parts[1:]
     recipe_folder: Literal['recipe', 'recipes'] = "recipe" if pack_format >= 48 else "recipes"
     namespace: str = parts[0] if parts else ""
 
@@ -565,11 +573,19 @@ def get_modified_content(filepath: Path, pack_type: str, version: str, mc_versio
         return filepath.read_bytes()
 
 
+def _is_ignored_path(filepath: Path) -> bool:
+    """判断文件是否应被排除：完整相对路径中任一层级命中 IGNORE_NAMES 或为隐藏项。
+
+    仅检查 filepath.name / parent.name 会漏掉 .git/objects/...、.idea/inspectionProfiles/...
+    这类深层文件，因此按 PROJECT_DIR 起的全部路径组件逐级判断。
+    """
+    parts: tuple[str, ...] = filepath.relative_to(other=PROJECT_DIR).parts
+    return any(part in IGNORE_NAMES or part.startswith(".") for part in parts)
+
+
 def should_include(filepath: Path, pack_type: str) -> bool:
     """判断文件是否应纳入指定类型的包。"""
-    if filepath.name in IGNORE_NAMES or filepath.parent.name in IGNORE_NAMES:
-        return False
-    if filepath.is_dir() and filepath.name.startswith(".") and filepath.name != "META-INF":
+    if _is_ignored_path(filepath):
         return False
     if pack_type == "datapack":
         if filepath.name in ("fabric.mod.json", "quilt.mod.json", "mods.toml", "neoforge.mods.toml"):
@@ -646,7 +662,10 @@ def build_all_loader(version: str, mc_version: str, output_dir: Path) -> None:
         for filepath in sorted(PROJECT_DIR.rglob(pattern="*")):
             if not filepath.is_file():
                 continue
-            if _is_version_dir(filepath.parent.name) or filepath.parent.name in IGNORE_NAMES:
+            if _is_version_dir(filepath.parent.name) or _is_ignored_path(filepath):
+                continue
+            # 版本源目录内的配方由 add_recipe_files 统一写入，避免此处重复写入
+            if _is_version_dir(filepath.relative_to(PROJECT_DIR).parts[0]):
                 continue
             if not include_class_files and filepath.suffix == ".class":
                 continue

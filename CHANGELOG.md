@@ -6,17 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ---
 
-## v4.0.4
+## v4.0.5
 
 This version is limited to:
-- 94.1-1.21.11
-- 101.1-26.1
-- 107.1-26.2
+- 57-1.21.2-1.21.3+
 
-### Added
+### Fixed
 
-- Compatibility with versions such as 26.2.
-
-### Changed
-
-- `Iron Chest` is no longer present in the `blacklist.json` of versions 94 through 107.
+- Fixed shaped (ordered) crafting recipes being broken in versions 1.21.2+ (pack_format >= 57), where the `key` field was incorrectly converted into a list of character keys, losing the ingredient mapping and rendering the recipes unusable.
